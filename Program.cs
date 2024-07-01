@@ -34,6 +34,10 @@ namespace OpcUaHelperGetNoteIdTest
                 outputBuilder.Length = 0;
                 Recursive();
             }
+            else
+            {
+                Console.WriteLine("网络断开，请检查！！！，联网后请重启程序！！！");
+            }
             Console.ReadLine();
         }
 
@@ -100,7 +104,7 @@ namespace OpcUaHelperGetNoteIdTest
                         outputBuilder.AppendLine(workNanme);
                     }
                     
-                    if (lineCount >= 10)
+                    if (lineCount >= 1000)
                     {
                         Console.Clear();
                         Console.WriteLine("写入到下一文件" + lineCount);

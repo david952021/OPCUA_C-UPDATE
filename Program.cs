@@ -14,7 +14,12 @@ namespace OpcUaHelperGetNoteIdTest
     {
         static OpcUaClient opcUaClient ;
         private static System.Timers.Timer heartbeatTimer;
-        private static string uri = "opc.tcp://10.82.51.3:4840";
+        /*private static string uri = "opc.tcp://10.82.51.3:4840";*/ //1号切割机
+        private static string uri = "opc.tcp://10.82.51.3:4840";  //2号切割机
+        /*private static string uri = "opc.tcp://10.82.51.10:4840";*/  //5号切割机
+        /*private static string uri = "opc.tcp://10.82.51.11:4840";*/   //6号切割机
+        /*private static string uri = "opc.tcp://10.82.51.9:4840";*/   //印字机
+        /*private static string uri = "opc.tcp://10.82.51.6:4840";*/   //大族激光
         public static int lineCount = 0;
         /*public  static string currenttime = DateTime.Now.ToString().Replace("/", "").Replace(" ", "0").Replace(":", "");*/
         /*public static string outputPath = @"d:\5\" + currenttime + ".txt";*/
@@ -28,7 +33,7 @@ namespace OpcUaHelperGetNoteIdTest
 
             if (opcUaClient.Connected)
             {
-                heartbeatTimer = new System.Timers.Timer(3000); // 设置心跳间隔为5秒
+                heartbeatTimer = new System.Timers.Timer(3000); // 设置心跳间隔为3秒
                 heartbeatTimer.Elapsed += HeartbeatTick;
                 heartbeatTimer.Start(); // 开始定时器
                 outputBuilder.Length = 0;
@@ -81,19 +86,20 @@ namespace OpcUaHelperGetNoteIdTest
                 globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.actual.opMode"));//工作模式  1：自动 2：编辑 3：MDI 4：DNC 5：手轮 6:手动
                 globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.actual.position.x"));//机械坐标
                 globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.partProgram.filename"));//当前程序号
-                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.actual.elapsedTime"));//加工时间   （秒）
-                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.partProgram.planSizeX"));//板材规格
-                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.partProgram.planSizeY"));//板材规格
-                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.partProgram.material"));//板材规格
-                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.actual.cycleStart"));//切割状态    0：未切割 1：切割
+                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.actual.position.blockNumber"));//当前程行号
+                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.actual.elapsedTime"));//当前程序加工时间   （秒）
                 globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.partProgram.thickness"));//切割厚度
+                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.partProgram.planSizeX"));//板材规格 长
+                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.partProgram.planSizeY"));//板材规格 宽
+                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.partProgram.material"));//板材规格  材质
+                globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.actual.cycleStart"));//切割状态    0：未切割 1：切割
                 globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.plasma[1].arcVoltage"));//工作电压 V
                 globalNodeIds.Add(new NodeId("ns=4;s=.PDC_Read.plasma[1].analogCurrent"));//工作电流  A
 
                 // dataValues按顺序定义的值，每个值里面需要重新判断类型
                 List<DataValue> dataValues = opcUaClient.ReadNodes(globalNodeIds.ToArray());
                 string currenttime = DateTime.Now.ToString();
-                string workNanme = "切割机运行;切割机空闲;报警信息;工作模式;机械坐标;当前程序号;加工时间(s);板材规格x;板材规格y;板材规格;切割状态;切割厚度(mm);工作电压;工作电流;";
+                string workNanme = "切割机运行;切割机空闲;报警信息;工作模式;机械坐标;当前程序号;当前程序行号;加工时间(s);板材厚度(mm);板材长度;板材宽度;板材材质;切割状态;工作电压;工作电流;";
                 if (dataValues != null)
                 {
                     
